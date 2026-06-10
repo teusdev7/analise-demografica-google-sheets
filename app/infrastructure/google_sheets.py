@@ -207,7 +207,7 @@ def criar_requisicoes_formatacao(
                     "startRowIndex": 0,
                     "endRowIndex": 1,
                     "startColumnIndex": 0,
-                    "endColumnIndex": 5,
+                    "endColumnIndex": 6,
                 },
                 "cell": {
                     "userEnteredFormat": {
@@ -231,7 +231,7 @@ def criar_requisicoes_formatacao(
                     "startRowIndex": 1,
                     "endRowIndex": quantidade_linhas,
                     "startColumnIndex": 1,
-                    "endColumnIndex": 5,
+                    "endColumnIndex": 6,
                 },
                 "cell": {
                     "userEnteredFormat": {

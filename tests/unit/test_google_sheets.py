@@ -69,7 +69,7 @@ class GoogleSheetsTest(unittest.TestCase):
         ]
 
         self.assertEqual(len(autoajustes), 1)
-        self.assertEqual(autoajustes[0]["dimensions"]["endIndex"], 5)
+        self.assertEqual(autoajustes[0]["dimensions"]["endIndex"], 6)
         self.assertEqual(len(requisicoes), 8)
 
     def test_localiza_aba_por_gid(self):
