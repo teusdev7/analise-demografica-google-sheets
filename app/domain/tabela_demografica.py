@@ -153,6 +153,7 @@ def montar_tabela_demografica(
     situacao_conjugal = dataframe[PERGUNTA_PARCEIRO].map(classificar_parceiro)
     realizacao_exame = dataframe[PERGUNTA_EXAME].map(classificar_exame)
     conhecimento = dataframe[PERGUNTA_CONHECIMENTO].map(conhece_papanicolau)
+    conhecimento_hpv = dataframe[PERGUNTA_CONHECIMENTO_HPV].map(conhece_hpv)
 
     escolaridade = dataframe[PERGUNTA_ESCOLARIDADE].map(limpar_texto)
     etnia = dataframe[PERGUNTA_ETNIA].map(limpar_texto)
@@ -184,13 +185,17 @@ def montar_tabela_demografica(
                 "Conhecimento sobre o Papanicolau\n"
                 f"Total = {indicadores.total_conhecem} (%)"
             ),
+            (
+                "Conhecimento sobre o HPV\n"
+                f"Total = {indicadores.total_conhecem_hpv} (%)"
+            ),
         ]
     ]
     linhas_de_secao: list[int] = []
 
     for titulo_secao, serie_grupo, categorias in secoes:
         linhas_de_secao.append(len(tabela))
-        tabela.append([titulo_secao, "", "", "", ""])
+        tabela.append([titulo_secao, "", "", "", "", ""])
 
         for categoria in categorias:
             mascara = serie_grupo.eq(categoria)
@@ -202,6 +207,7 @@ def montar_tabela_demografica(
                 (mascara & realizacao_exame.eq("Nunca realizou")).sum()
             )
             conhecem = int((mascara & conhecimento).sum())
+            conhecem_hpv = int((mascara & conhecimento_hpv).sum())
 
             tabela.append(
                 [
@@ -221,6 +227,10 @@ def montar_tabela_demografica(
                     formatar_n_percentual(
                         conhecem,
                         indicadores.total_conhecem,
+                    ),
+                    formatar_n_percentual(
+                        conhecem_hpv,
+                        indicadores.total_conhecem_hpv,
                     ),
                 ]
             )
