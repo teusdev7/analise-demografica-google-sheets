@@ -61,6 +61,7 @@ class GoogleSheetsTest(unittest.TestCase):
             sheet_id=321,
             quantidade_linhas=15,
             linhas_de_secao=[1, 4],
+            quantidade_colunas=7,
         )
         autoajustes = [
             requisicao["autoResizeDimensions"]
@@ -69,7 +70,7 @@ class GoogleSheetsTest(unittest.TestCase):
         ]
 
         self.assertEqual(len(autoajustes), 1)
-        self.assertEqual(autoajustes[0]["dimensions"]["endIndex"], 6)
+        self.assertEqual(autoajustes[0]["dimensions"]["endIndex"], 7)
         self.assertEqual(len(requisicoes), 8)
 
     def test_localiza_aba_por_gid(self):
@@ -91,11 +92,21 @@ class GoogleSheetsTest(unittest.TestCase):
             ),
             "Você sabe o que é o Papanicolau",
             "Você conhece o HPV e a sua forma de transmissão e relação com o câncer?",
+            "Realiza o exame em rede pública ou privada?",
         ]
         servico = ServicoFalso(
             [
                 cabecalhos,
-                ["20", "Superior", "Branca", "Sim", "Não", "Sim", "Sim"],
+                [
+                    "20",
+                    "Superior",
+                    "Branca",
+                    "Sim",
+                    "Não",
+                    "Sim",
+                    "Sim",
+                    "Pública",
+                ],
                 ["30", "Médio", "Parda", "Não"],
             ]
         )

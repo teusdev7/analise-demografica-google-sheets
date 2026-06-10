@@ -45,6 +45,8 @@ class InterfaceWebTest(unittest.TestCase):
             total_nunca_realizaram=23,
             total_conhecem=44,
             total_conhecem_hpv=30,
+            total_rede_publica=4,
+            total_rede_privada=25,
         )
 
         resposta = self.client.post(
