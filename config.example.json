@@ -1,0 +1,6 @@
+{
+  "spreadsheet_id": "ID_DA_SUA_PLANILHA",
+  "gid_aba_origem": 0,
+  "nome_aba_destino": "Planilha1",
+  "arquivo_credenciais": "credentials/credenciais.json"
+}

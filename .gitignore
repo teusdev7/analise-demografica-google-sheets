@@ -1,0 +1,8 @@
+credenciais.json
+credentials/*.json
+config.local.json
+*.pyc
+__pycache__/
+.env
+.pytest_cache/
+.coverage
