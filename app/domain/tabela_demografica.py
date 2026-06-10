@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from dataclasses import dataclass
 from typing import Any
 
 import pandas as pd
@@ -26,6 +27,14 @@ PERGUNTAS_OBRIGATORIAS = [
     PERGUNTA_EXAME,
     PERGUNTA_CONHECIMENTO,
 ]
+
+
+@dataclass(frozen=True)
+class IndicadoresDemograficos:
+    total_respostas: int
+    total_ja_realizaram: int
+    total_nunca_realizaram: int
+    total_conhecem: int
 
 
 def normalizar_texto(valor: Any) -> str:
@@ -108,19 +117,32 @@ def formatar_n_percentual(n: int, denominador: int) -> str:
     return f"{n} ({percentual:.1f}%)".replace(".", ",")
 
 
+def calcular_indicadores(
+    dataframe: pd.DataFrame,
+) -> IndicadoresDemograficos:
+    realizacao_exame = dataframe[PERGUNTA_EXAME].map(classificar_exame)
+    conhecimento = dataframe[PERGUNTA_CONHECIMENTO].map(conhece_papanicolau)
+    return IndicadoresDemograficos(
+        total_respostas=len(dataframe),
+        total_ja_realizaram=int(
+            realizacao_exame.eq("Já realizou").sum()
+        ),
+        total_nunca_realizaram=int(
+            realizacao_exame.eq("Nunca realizou").sum()
+        ),
+        total_conhecem=int(conhecimento.sum()),
+    )
+
+
 def montar_tabela_demografica(
     dataframe: pd.DataFrame,
 ) -> tuple[list[list[str]], list[int]]:
     """Calcula contagens e percentuais por coluna."""
-    total_respostas = len(dataframe)
+    indicadores = calcular_indicadores(dataframe)
     faixa_idade = dataframe[PERGUNTA_IDADE].map(classificar_idade)
     situacao_conjugal = dataframe[PERGUNTA_PARCEIRO].map(classificar_parceiro)
     realizacao_exame = dataframe[PERGUNTA_EXAME].map(classificar_exame)
     conhecimento = dataframe[PERGUNTA_CONHECIMENTO].map(conhece_papanicolau)
-
-    total_ja_realizaram = int(realizacao_exame.eq("Já realizou").sum())
-    total_nunca_realizaram = int(realizacao_exame.eq("Nunca realizou").sum())
-    total_conhecem = int(conhecimento.sum())
 
     escolaridade = dataframe[PERGUNTA_ESCOLARIDADE].map(limpar_texto)
     etnia = dataframe[PERGUNTA_ETNIA].map(limpar_texto)
@@ -139,18 +161,18 @@ def montar_tabela_demografica(
     tabela: list[list[str]] = [
         [
             "Dados demográficos",
-            f"Total = {total_respostas} (%)",
+            f"Total = {indicadores.total_respostas} (%)",
             (
                 "Já realizaram o exame preventivo (Papanicolau)\n"
-                f"Total = {total_ja_realizaram} (%)"
+                f"Total = {indicadores.total_ja_realizaram} (%)"
             ),
             (
                 "Nunca realizaram o exame preventivo\n"
-                f"Total = {total_nunca_realizaram} (%)"
+                f"Total = {indicadores.total_nunca_realizaram} (%)"
             ),
             (
                 "Conhecimento sobre o Papanicolau\n"
-                f"Total = {total_conhecem} (%)"
+                f"Total = {indicadores.total_conhecem} (%)"
             ),
         ]
     ]
@@ -174,14 +196,22 @@ def montar_tabela_demografica(
             tabela.append(
                 [
                     categoria,
-                    formatar_n_percentual(total_categoria, total_respostas),
                     formatar_n_percentual(
-                        ja_realizaram, total_ja_realizaram
+                        total_categoria,
+                        indicadores.total_respostas,
                     ),
                     formatar_n_percentual(
-                        nunca_realizaram, total_nunca_realizaram
+                        ja_realizaram,
+                        indicadores.total_ja_realizaram,
                     ),
-                    formatar_n_percentual(conhecem, total_conhecem),
+                    formatar_n_percentual(
+                        nunca_realizaram,
+                        indicadores.total_nunca_realizaram,
+                    ),
+                    formatar_n_percentual(
+                        conhecem,
+                        indicadores.total_conhecem,
+                    ),
                 ]
             )
 
