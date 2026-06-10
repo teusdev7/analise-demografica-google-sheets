@@ -9,10 +9,11 @@ const closeAlert = document.querySelector("#closeAlert");
 const steps = [...document.querySelectorAll("#processSteps li")];
 
 const metrics = {
-  responses: document.querySelector("#metricResponses"),
-  performed: document.querySelector("#metricPerformed"),
-  never: document.querySelector("#metricNever"),
-  knowledge: document.querySelector("#metricKnowledge"),
+  responses: document.querySelector("#totalRespostas"),
+  performed: document.querySelector("#totalRealizaram"),
+  never: document.querySelector("#totalNuncaRealizaram"),
+  knowledge: document.querySelector("#totalConhecem"),
+  knowledgeHpv: document.querySelector("#totalConhecemHpv"),
 };
 
 let progressTimers = [];
@@ -89,6 +90,7 @@ function displayResult(result) {
   animateNumber(metrics.performed, result.total_ja_realizaram);
   animateNumber(metrics.never, result.total_nunca_realizaram);
   animateNumber(metrics.knowledge, result.total_conhecem);
+  animateNumber(metrics.knowledgeHpv, result.total_conhecem_hpv);
 
   resultDescription.textContent =
     `${result.total_linhas_tabela} linhas foram atualizadas na aba ` +
