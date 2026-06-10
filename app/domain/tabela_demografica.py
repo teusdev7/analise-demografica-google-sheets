@@ -19,6 +19,9 @@ PERGUNTA_EXAME = (
     "Já realizou o exame? Se sim, com que frequência? Em qual período do ano?"
 )
 PERGUNTA_CONHECIMENTO = "Você sabe o que é o Papanicolau"
+PERGUNTA_CONHECIMENTO_HPV = (
+    "Você conhece o HPV e a sua forma de transmissão e relação com o câncer?"
+)
 
 PERGUNTAS_OBRIGATORIAS = [
     PERGUNTA_IDADE,
@@ -27,6 +30,7 @@ PERGUNTAS_OBRIGATORIAS = [
     PERGUNTA_PARCEIRO,
     PERGUNTA_EXAME,
     PERGUNTA_CONHECIMENTO,
+    PERGUNTA_CONHECIMENTO_HPV,
 ]
 
 
@@ -36,6 +40,7 @@ class IndicadoresDemograficos:
     total_ja_realizaram: int
     total_nunca_realizaram: int
     total_conhecem: int
+    total_conhecem_hpv: int
 
 
 def normalizar_texto(valor: Any) -> str:
@@ -103,6 +108,12 @@ def conhece_papanicolau(valor: Any) -> bool:
     return normalizar_texto(valor) == "sim"
 
 
+def conhece_hpv(valor: Any) -> bool:
+    return normalizar_texto(valor) == "sim"
+
+def conhece_hpv(valor: Any) -> bool:
+    return normalizar_texto(valor) == "sim"
+
 def valores_unicos(serie: pd.Series) -> list[str]:
     """Retorna os valores preenchidos em ordem alfabética."""
     valores = {
@@ -123,15 +134,13 @@ def calcular_indicadores(
 ) -> IndicadoresDemograficos:
     realizacao_exame = dataframe[PERGUNTA_EXAME].map(classificar_exame)
     conhecimento = dataframe[PERGUNTA_CONHECIMENTO].map(conhece_papanicolau)
+    conhecimento_hpv = dataframe[PERGUNTA_CONHECIMENTO_HPV].map(conhece_hpv)
     return IndicadoresDemograficos(
         total_respostas=len(dataframe),
-        total_ja_realizaram=int(
-            realizacao_exame.eq("Já realizou").sum()
-        ),
-        total_nunca_realizaram=int(
-            realizacao_exame.eq("Nunca realizou").sum()
-        ),
+        total_ja_realizaram=int(realizacao_exame.eq("Já realizou").sum()),
+        total_nunca_realizaram=int(realizacao_exame.eq("Nunca realizou").sum()),
         total_conhecem=int(conhecimento.sum()),
+        total_conhecem_hpv=int(conhecimento_hpv.sum()),
     )
 
 

@@ -30,6 +30,8 @@ class ResultadoAtualizacao:
     total_ja_realizaram: int
     total_nunca_realizaram: int
     total_conhecem: int
+    total_conhecem_hpv: int
+    total_conhecem_hpv: int
 
     @property
     def link_planilha(self) -> str:
@@ -110,8 +112,7 @@ def atualizar_tabela(
         total_linhas_tabela=len(tabela) - 1,
         total_ja_realizaram=indicadores.total_ja_realizaram,
         total_nunca_realizaram=indicadores.total_nunca_realizaram,
-        total_conhecem=indicadores.total_conhecem,
-    )
+        total_conhecem=indicadores.total_conhecem,        total_conhecem_hpv=indicadores.total_conhecem_hpv,    )
 
 
 def executar(args: argparse.Namespace) -> int:

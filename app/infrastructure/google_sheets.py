@@ -176,7 +176,7 @@ def criar_requisicoes_formatacao(
         "startRowIndex": 0,
         "endRowIndex": quantidade_linhas,
         "startColumnIndex": 0,
-        "endColumnIndex": 5,
+        "endColumnIndex": 6,
     }
 
     requisicoes: list[dict[str, Any]] = [
@@ -315,43 +315,40 @@ def escrever_e_formatar_planilha(
     tabela: list[list[str]],
     linhas_de_secao: list[int],
 ) -> None:
-    sheet_id = obter_ou_criar_aba(
-        servico_sheets, spreadsheet_id, nome_aba
+    """Cria ou limpa a aba de destino, escreve os dados e formata a tabela."""
+    sheet_id = obter_ou_criar_aba(servico_sheets, spreadsheet_id, nome_aba)
+    cabecalho = [
+        "Demográfico",
+        "Total",
+        "Já realizaram",
+        "Nunca realizaram",
+        "Conhece Papanicolau",
+        "Conhece HPV",
+    ]
+    corpo_tabela = [cabecalho, *tabela]
+    quantidade_linhas = len(corpo_tabela)
+    quantidade_colunas = len(cabecalho)
+    corpo_requisicao = {
+        "valueInputOption": "USER_ENTERED",
+        "data": [
+            {
+                "range": f"'{escapar_nome_aba(nome_aba)}'!A1",
+                "values": corpo_tabela,
+            }
+        ],
+    }
+    requisicoes_formatacao = criar_requisicoes_formatacao(
+        sheet_id,
+        quantidade_linhas,
+        linhas_de_secao,
     )
-    aba_a1 = escapar_nome_aba(nome_aba)
-
-    (
-        servico_sheets.spreadsheets()
-        .values()
-        .clear(
-            spreadsheetId=spreadsheet_id,
-            range=f"'{aba_a1}'!A:E",
-            body={},
-        )
-        .execute()
-    )
-    (
-        servico_sheets.spreadsheets()
-        .values()
-        .update(
-            spreadsheetId=spreadsheet_id,
-            range=f"'{aba_a1}'!A1",
-            valueInputOption="RAW",
-            body={"majorDimension": "ROWS", "values": tabela},
-        )
-        .execute()
-    )
-    (
-        servico_sheets.spreadsheets()
-        .batchUpdate(
-            spreadsheetId=spreadsheet_id,
-            body={
-                "requests": criar_requisicoes_formatacao(
-                    sheet_id,
-                    quantidade_linhas=len(tabela),
-                    linhas_de_secao=linhas_de_secao,
-                )
-            },
-        )
-        .execute()
-    )
+    servico_sheets.spreadsheets().values().batchUpdate(
+        spreadsheetId=spreadsheet_id,
+        body=corpo_requisicao,
+    ).execute()
+    servico_sheets.spreadsheets().batchUpdate(
+        spreadsheetId=spreadsheet_id,
+        body={"requests": requisicoes_formatacao},
+    ).execute()
+    print(f'  Aba "{nome_aba}" atualizada com sucesso.')
+    print(f"  Linhas: {quantidade_linhas} | Colunas: {quantidade_colunas}")
