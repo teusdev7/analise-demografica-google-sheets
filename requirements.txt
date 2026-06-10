@@ -2,3 +2,4 @@ pandas>=2.0
 google-auth>=2.0
 google-api-python-client>=2.0
 Flask>=3.0
+playwright>=1.50
