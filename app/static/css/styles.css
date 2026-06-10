@@ -928,7 +928,7 @@ main {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 16px;
 }
 
@@ -975,6 +975,11 @@ main {
 .metric-card.violet .metric-icon {
   color: #7655a6;
   background: #f1ebfa;
+}
+
+.metric-card.indigo .metric-icon {
+  color: #4757a6;
+  background: #edf0ff;
 }
 
 .metric-card > div {

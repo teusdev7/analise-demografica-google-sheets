@@ -9,11 +9,11 @@ const closeAlert = document.querySelector("#closeAlert");
 const steps = [...document.querySelectorAll("#processSteps li")];
 
 const metrics = {
-  responses: document.querySelector("#totalRespostas"),
-  performed: document.querySelector("#totalRealizaram"),
-  never: document.querySelector("#totalNuncaRealizaram"),
-  knowledge: document.querySelector("#totalConhecem"),
-  knowledgeHpv: document.querySelector("#totalConhecemHpv"),
+  responses: document.querySelector("#metricResponses"),
+  performed: document.querySelector("#metricPerformed"),
+  never: document.querySelector("#metricNever"),
+  knowledge: document.querySelector("#metricKnowledge"),
+  knowledgeHpv: document.querySelector("#metricKnowledgeHpv"),
 };
 
 let progressTimers = [];
