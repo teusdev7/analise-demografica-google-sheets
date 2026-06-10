@@ -1189,7 +1189,8 @@ footer > p {
   .topbar,
   main,
   footer {
-    width: min(100% - 28px, 1180px);
+    width: calc(100vw - 28px);
+    max-width: calc(100vw - 28px);
   }
 
   .topbar {
@@ -1214,7 +1215,9 @@ footer > p {
   }
 
   .hero h1 {
+    max-width: 100%;
     font-size: clamp(39px, 12vw, 54px);
+    overflow-wrap: anywhere;
   }
 
   .hero-copy > p {
@@ -1222,12 +1225,16 @@ footer > p {
   }
 
   .hero-visual {
+    width: 100%;
+    max-width: 100%;
     min-height: 335px;
   }
 
   .visual-card {
-    right: 0;
-    width: 100%;
+    right: auto;
+    left: 0;
+    width: calc(100% - 4px);
+    max-width: calc(100vw - 32px);
     transform: none;
   }
 
@@ -1250,7 +1257,7 @@ footer > p {
   }
 
   .chart-row {
-    grid-template-columns: 64px minmax(0, 1fr) 32px;
+    grid-template-columns: 58px minmax(0, 1fr) 38px;
     gap: 7px;
   }
 
@@ -1268,6 +1275,7 @@ footer > p {
   }
 
   .floating-badge {
+    max-width: calc(100vw - 56px);
     min-width: 170px;
     padding: 10px 12px;
   }
