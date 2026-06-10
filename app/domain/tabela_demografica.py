@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
@@ -218,7 +219,10 @@ def montar_tabela_demografica(
     return tabela, linhas_de_secao
 
 
-def avisar_respostas_nao_classificadas(dataframe: pd.DataFrame) -> None:
+def avisar_respostas_nao_classificadas(
+    dataframe: pd.DataFrame,
+    informar: Callable[[str], None] = print,
+) -> None:
     verificacoes = [
         (
             "idade",
@@ -236,7 +240,7 @@ def avisar_respostas_nao_classificadas(dataframe: pd.DataFrame) -> None:
     for nome, mascara in verificacoes:
         quantidade = int(mascara.sum())
         if quantidade:
-            print(
+            informar(
                 f"  Aviso: {quantidade} resposta(s) sem classificação "
                 f"para {nome}."
             )

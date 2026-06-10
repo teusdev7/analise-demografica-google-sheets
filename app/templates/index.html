@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Dashboard local para gerar análises demográficas no Google Sheets."
+    >
+    <title>Demografia Sheets</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    >
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Página inicial">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <path d="M7 7.5A2.5 2.5 0 0 1 9.5 5h13A2.5 2.5 0 0 1 25 7.5v17a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 7 24.5z"/>
+            <path d="M11 21v-4m5 4v-9m5 9v-6"/>
+          </svg>
+        </span>
+        <span>
+          <strong>Demografia</strong>
+          <small>Sheets</small>
+        </span>
+      </a>
+
+      <div class="topbar-status">
+        <span
+          class="status-dot {{ 'is-ready' if credenciais_prontas else 'is-warning' }}"
+          aria-hidden="true"
+        ></span>
+        <span>
+          {{ 'Ambiente pronto' if credenciais_prontas else 'Credenciais pendentes' }}
+        </span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">
+            <span class="eyebrow-line"></span>
+            Análise demográfica automatizada
+          </div>
+          <h1>
+            Transforme respostas em uma
+            <span>tabela pronta para apresentar.</span>
+          </h1>
+          <p>
+            Leia respostas do Google Sheets, calcule cruzamentos com precisão
+            e publique uma tabela formatada em poucos segundos.
+          </p>
+          <div class="hero-highlights" aria-label="Características">
+            <span>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="m5 10 3 3 7-7"/>
+              </svg>
+              Percentuais por coluna
+            </span>
+            <span>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="m5 10 3 3 7-7"/>
+              </svg>
+              Formatação automática
+            </span>
+            <span>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="m5 10 3 3 7-7"/>
+              </svg>
+              Credenciais locais
+            </span>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="visual-card">
+            <div class="visual-header">
+              <span></span><span></span><span></span>
+              <div class="visual-title">Resumo demográfico</div>
+            </div>
+            <div class="visual-content">
+              <div class="mini-metric">
+                <span>Respostas</span>
+                <strong>52</strong>
+                <small>base analisada</small>
+              </div>
+              <div class="mini-chart">
+                <div class="chart-row">
+                  <span>Até 23 anos</span>
+                  <div><i style="width: 50%"></i></div>
+                  <b>50%</b>
+                </div>
+                <div class="chart-row">
+                  <span>23 anos ou mais</span>
+                  <div><i style="width: 50%"></i></div>
+                  <b>50%</b>
+                </div>
+                <div class="chart-row">
+                  <span>Conhecimento</span>
+                  <div><i class="accent" style="width: 84.6%"></i></div>
+                  <b>84,6%</b>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="floating-badge badge-top">
+            <span class="badge-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 12.5 9.2 17 19 7"/>
+              </svg>
+            </span>
+            <span><strong>Dados validados</strong><small>cálculos consistentes</small></span>
+          </div>
+          <div class="floating-badge badge-bottom">
+            <span class="badge-icon sheet">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 12h6M10 16h6"/>
+              </svg>
+            </span>
+            <span><strong>Google Sheets</strong><small>sincronização direta</small></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace" id="workspace">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">Nova atualização</span>
+            <h2>Configure a fonte dos dados</h2>
+          </div>
+          <p>
+            Informe a planilha e a aba de respostas. A tabela será atualizada
+            sem modificar os dados originais.
+          </p>
+        </div>
+
+        <div class="workspace-grid">
+          <form class="config-card" id="updateForm">
+            <div class="card-heading">
+              <span class="card-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5z"/>
+                  <path d="M8 9h8M8 13h8M8 17h5"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Origem e destino</h3>
+                <p>Os dados de acesso permanecem somente neste computador.</p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="planilha">URL ou ID da planilha</label>
+              <div class="input-shell">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2"/>
+                  <path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/>
+                </svg>
+                <input
+                  id="planilha"
+                  name="planilha"
+                  type="text"
+                  value="{{ url_planilha }}"
+                  placeholder="https://docs.google.com/spreadsheets/d/..."
+                  autocomplete="off"
+                  required
+                >
+              </div>
+              <small class="field-help">Cole o link completo ou apenas o identificador.</small>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="gidOrigem">GID da aba de respostas</label>
+                <div class="input-shell">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 5h14v14H5zM5 10h14M10 5v14"/>
+                  </svg>
+                  <input
+                    id="gidOrigem"
+                    name="gid_origem"
+                    type="number"
+                    min="0"
+                    value="{{ gid_aba_origem }}"
+                    required
+                  >
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="abaDestino">Aba de destino</label>
+                <div class="input-shell">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h7l2 2h7v10H4z"/>
+                  </svg>
+                  <input
+                    id="abaDestino"
+                    name="aba_destino"
+                    type="text"
+                    value="{{ nome_aba_destino }}"
+                    maxlength="100"
+                    required
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="security-row">
+              <span class="security-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3 5 6v5c0 4.6 2.8 8.2 7 10 4.2-1.8 7-5.4 7-10V6z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </span>
+              <div>
+                <strong>
+                  {{ 'Credenciais configuradas' if credenciais_prontas else 'Credenciais não encontradas' }}
+                </strong>
+                <small>
+                  {{ 'A conta de serviço está pronta para uso.' if credenciais_prontas else 'Adicione credentials/credenciais.json antes de executar.' }}
+                </small>
+              </div>
+              <span class="security-state {{ 'ready' if credenciais_prontas else 'warning' }}">
+                {{ 'Pronto' if credenciais_prontas else 'Pendente' }}
+              </span>
+            </div>
+
+            <button
+              class="primary-button"
+              id="submitButton"
+              type="submit"
+              {% if not credenciais_prontas %}disabled{% endif %}
+            >
+              <span class="button-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v6h-6"/>
+                </svg>
+                Atualizar tabela demográfica
+              </span>
+              <span class="button-loading">
+                <i></i>
+                Processando dados
+              </span>
+            </button>
+          </form>
+
+          <aside class="process-card">
+            <div class="card-heading compact">
+              <span class="card-icon warm">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Fluxo de processamento</h3>
+                <p>Acompanhe cada etapa da atualização.</p>
+              </div>
+            </div>
+
+            <ol class="steps" id="processSteps">
+              <li data-step="1">
+                <span class="step-number">1</span>
+                <div><strong>Conectar ao Sheets</strong><small>Autenticação segura via conta de serviço</small></div>
+                <span class="step-check">
+                  <svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg>
+                </span>
+              </li>
+              <li data-step="2">
+                <span class="step-number">2</span>
+                <div><strong>Ler as respostas</strong><small>Validação dos cabeçalhos e registros</small></div>
+                <span class="step-check">
+                  <svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg>
+                </span>
+              </li>
+              <li data-step="3">
+                <span class="step-number">3</span>
+                <div><strong>Calcular cruzamentos</strong><small>Contagens e percentuais por coluna</small></div>
+                <span class="step-check">
+                  <svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg>
+                </span>
+              </li>
+              <li data-step="4">
+                <span class="step-number">4</span>
+                <div><strong>Formatar a tabela</strong><small>Escrita, bordas, cores e larguras</small></div>
+                <span class="step-check">
+                  <svg viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg>
+                </span>
+              </li>
+            </ol>
+
+            <div class="process-note">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>
+              </svg>
+              <span>A aba de origem nunca é alterada durante o processo.</span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="result-section" id="resultSection" hidden>
+        <div class="result-heading">
+          <div class="success-mark">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m5 12 4 4L19 6"/>
+            </svg>
+          </div>
+          <div>
+            <span>Atualização concluída</span>
+            <h2>Seus dados estão prontos</h2>
+            <p id="resultDescription">A tabela foi calculada e formatada com sucesso.</p>
+          </div>
+          <a class="secondary-button" id="openSheetButton" href="#" target="_blank" rel="noreferrer">
+            Abrir no Google Sheets
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M7 13 13 7M8 7h5v5"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="metrics-grid">
+          <article class="metric-card blue">
+            <span class="metric-icon">
+              <svg viewBox="0 0 24 24"><path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM16 9a3 3 0 1 0 0-6M2 21v-3a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v3M15 13h1a5 5 0 0 1 5 5v3"/></svg>
+            </span>
+            <div><span>Respostas analisadas</span><strong id="metricResponses">0</strong></div>
+          </article>
+          <article class="metric-card teal">
+            <span class="metric-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+            </span>
+            <div><span>Já realizaram o exame</span><strong id="metricPerformed">0</strong></div>
+          </article>
+          <article class="metric-card amber">
+            <span class="metric-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
+            </span>
+            <div><span>Nunca realizaram</span><strong id="metricNever">0</strong></div>
+          </article>
+          <article class="metric-card violet">
+            <span class="metric-icon">
+              <svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M8 14a7 7 0 1 1 8 0c-1 .7-1 1.5-1 2H9c0-.5 0-1.3-1-2Z"/></svg>
+            </span>
+            <div><span>Conhecem o Papanicolau</span><strong id="metricKnowledge">0</strong></div>
+          </article>
+        </div>
+      </section>
+
+      <div class="alert" id="alert" role="alert" aria-live="polite" hidden>
+        <span class="alert-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/></svg>
+        </span>
+        <div><strong id="alertTitle">Não foi possível atualizar</strong><p id="alertMessage"></p></div>
+        <button type="button" id="closeAlert" aria-label="Fechar aviso">
+          <svg viewBox="0 0 20 20"><path d="m5 5 10 10M15 5 5 15"/></svg>
+        </button>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-brand">
+        <span class="brand-mark small" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <path d="M7 7.5A2.5 2.5 0 0 1 9.5 5h13A2.5 2.5 0 0 1 25 7.5v17a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 7 24.5z"/>
+            <path d="M11 21v-4m5 4v-9m5 9v-6"/>
+          </svg>
+        </span>
+        <span><strong>Demografia Sheets</strong><small>Análise clara, decisões melhores.</small></span>
+      </div>
+      <p>Processamento local e integração segura com Google Sheets.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+</html>

@@ -85,7 +85,7 @@ def atualizar_tabela(
     if dataframe.empty:
         raise ValueError("Nenhuma resposta preenchida foi encontrada.")
     informar(f"DataFrame criado com {len(dataframe)} resposta(s).")
-    avisar_respostas_nao_classificadas(dataframe)
+    avisar_respostas_nao_classificadas(dataframe, informar=informar)
 
     informar("[4/5] Calculando os cruzamentos demográficos...")
     tabela, linhas_de_secao = montar_tabela_demografica(dataframe)

@@ -3,6 +3,9 @@
 Aplicação Python que lê respostas de uma aba do Google Sheets, calcula os
 cruzamentos demográficos e atualiza uma tabela formatada na aba `Planilha1`.
 
+O projeto oferece uma interface web local responsiva e também mantém o uso
+tradicional pelo terminal.
+
 ## Arquitetura
 
 ```text
@@ -14,6 +17,11 @@ buscadedados/
 |   |   `-- tabela_demografica.py
 |   |-- infrastructure/
 |   |   `-- google_sheets.py
+|   |-- static/
+|   |   |-- css/styles.css
+|   |   `-- js/app.js
+|   |-- templates/
+|   |   `-- index.html
 |   |-- __main__.py
 |   |-- cli.py
 |   `-- config.py
@@ -24,7 +32,9 @@ buscadedados/
 |-- tests/
 |   `-- unit/
 |       |-- test_google_sheets.py
-|       `-- test_tabela_demografica.py
+|       |-- test_tabela_demografica.py
+|       `-- test_web.py
+|-- interface.py
 |-- planilha_para_tabela.py
 |-- config.example.json
 |-- config.local.json
@@ -46,9 +56,38 @@ Responsabilidades:
 python -m pip install -r requirements.txt
 ```
 
-## Execução
+## Interface web
 
-O comando permanece o mesmo:
+Inicie o dashboard:
+
+```powershell
+python .\interface.py
+```
+
+O navegador abrirá automaticamente em:
+
+```text
+http://127.0.0.1:5000
+```
+
+Na interface é possível:
+
+- informar a URL ou o ID da planilha;
+- definir o `gid` da aba com respostas;
+- escolher a aba de destino;
+- acompanhar visualmente o processamento;
+- visualizar os totais calculados;
+- abrir a planilha atualizada.
+
+Para iniciar sem abrir o navegador automaticamente:
+
+```powershell
+python .\interface.py --sem-navegador
+```
+
+## Terminal
+
+O processamento também pode ser executado diretamente:
 
 ```powershell
 python .\planilha_para_tabela.py
