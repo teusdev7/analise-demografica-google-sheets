@@ -90,11 +90,12 @@ class GoogleSheetsTest(unittest.TestCase):
                 "Em qual período do ano?"
             ),
             "Você sabe o que é o Papanicolau",
+            "Você conhece o HPV e a sua forma de transmissão e relação com o câncer?",
         ]
         servico = ServicoFalso(
             [
                 cabecalhos,
-                ["20", "Superior", "Branca", "Sim", "Não", "Sim"],
+                ["20", "Superior", "Branca", "Sim", "Não", "Sim", "Sim"],
                 ["30", "Médio", "Parda", "Não"],
             ]
         )
