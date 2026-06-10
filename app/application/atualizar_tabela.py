@@ -31,7 +31,8 @@ class ResultadoAtualizacao:
     total_nunca_realizaram: int
     total_conhecem: int
     total_conhecem_hpv: int
-    total_conhecem_hpv: int
+    total_rede_publica: int
+    total_rede_privada: int
 
     @property
     def link_planilha(self) -> str:
@@ -112,7 +113,11 @@ def atualizar_tabela(
         total_linhas_tabela=len(tabela) - 1,
         total_ja_realizaram=indicadores.total_ja_realizaram,
         total_nunca_realizaram=indicadores.total_nunca_realizaram,
-        total_conhecem=indicadores.total_conhecem,        total_conhecem_hpv=indicadores.total_conhecem_hpv,    )
+        total_conhecem=indicadores.total_conhecem,
+        total_conhecem_hpv=indicadores.total_conhecem_hpv,
+        total_rede_publica=indicadores.total_rede_publica,
+        total_rede_privada=indicadores.total_rede_privada,
+    )
 
 
 def executar(args: argparse.Namespace) -> int:

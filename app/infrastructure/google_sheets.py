@@ -165,6 +165,7 @@ def criar_requisicoes_formatacao(
     sheet_id: int,
     quantidade_linhas: int,
     linhas_de_secao: list[int],
+    quantidade_colunas: int,
 ) -> list[dict[str, Any]]:
     azul = {"red": 0.12, "green": 0.31, "blue": 0.47}
     azul_claro = {"red": 0.85, "green": 0.92, "blue": 0.97}
@@ -176,7 +177,7 @@ def criar_requisicoes_formatacao(
         "startRowIndex": 0,
         "endRowIndex": quantidade_linhas,
         "startColumnIndex": 0,
-        "endColumnIndex": 6,
+        "endColumnIndex": quantidade_colunas,
     }
 
     requisicoes: list[dict[str, Any]] = [
@@ -207,7 +208,7 @@ def criar_requisicoes_formatacao(
                     "startRowIndex": 0,
                     "endRowIndex": 1,
                     "startColumnIndex": 0,
-                    "endColumnIndex": 6,
+                    "endColumnIndex": quantidade_colunas,
                 },
                 "cell": {
                     "userEnteredFormat": {
@@ -231,7 +232,7 @@ def criar_requisicoes_formatacao(
                     "startRowIndex": 1,
                     "endRowIndex": quantidade_linhas,
                     "startColumnIndex": 1,
-                    "endColumnIndex": 6,
+                    "endColumnIndex": quantidade_colunas,
                 },
                 "cell": {
                     "userEnteredFormat": {
@@ -263,7 +264,7 @@ def criar_requisicoes_formatacao(
                     "sheetId": sheet_id,
                     "dimension": "COLUMNS",
                     "startIndex": 0,
-                    "endIndex": 5,
+                    "endIndex": quantidade_colunas,
                 }
             }
         },
@@ -287,7 +288,7 @@ def criar_requisicoes_formatacao(
                         "startRowIndex": linha,
                         "endRowIndex": linha + 1,
                         "startColumnIndex": 0,
-                        "endColumnIndex": 5,
+                        "endColumnIndex": quantidade_colunas,
                     },
                     "cell": {
                         "userEnteredFormat": {
@@ -317,23 +318,15 @@ def escrever_e_formatar_planilha(
 ) -> None:
     """Cria ou limpa a aba de destino, escreve os dados e formata a tabela."""
     sheet_id = obter_ou_criar_aba(servico_sheets, spreadsheet_id, nome_aba)
-    cabecalho = [
-        "Demográfico",
-        "Total",
-        "Já realizaram",
-        "Nunca realizaram",
-        "Conhece Papanicolau",
-        "Conhece HPV",
-    ]
-    corpo_tabela = [cabecalho, *tabela]
-    quantidade_linhas = len(corpo_tabela)
-    quantidade_colunas = len(cabecalho)
+    quantidade_linhas = len(tabela)
+    quantidade_colunas = max(len(linha) for linha in tabela)
+    intervalo_destino = f"'{escapar_nome_aba(nome_aba)}'!A:G"
     corpo_requisicao = {
         "valueInputOption": "USER_ENTERED",
         "data": [
             {
                 "range": f"'{escapar_nome_aba(nome_aba)}'!A1",
-                "values": corpo_tabela,
+                "values": tabela,
             }
         ],
     }
@@ -341,7 +334,13 @@ def escrever_e_formatar_planilha(
         sheet_id,
         quantidade_linhas,
         linhas_de_secao,
+        quantidade_colunas,
     )
+    servico_sheets.spreadsheets().values().clear(
+        spreadsheetId=spreadsheet_id,
+        range=intervalo_destino,
+        body={},
+    ).execute()
     servico_sheets.spreadsheets().values().batchUpdate(
         spreadsheetId=spreadsheet_id,
         body=corpo_requisicao,

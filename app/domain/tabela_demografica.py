@@ -22,6 +22,7 @@ PERGUNTA_CONHECIMENTO = "Você sabe o que é o Papanicolau"
 PERGUNTA_CONHECIMENTO_HPV = (
     "Você conhece o HPV e a sua forma de transmissão e relação com o câncer?"
 )
+PERGUNTA_REDE_ATENDIMENTO = "Realiza o exame em rede pública ou privada?"
 
 PERGUNTAS_OBRIGATORIAS = [
     PERGUNTA_IDADE,
@@ -31,6 +32,7 @@ PERGUNTAS_OBRIGATORIAS = [
     PERGUNTA_EXAME,
     PERGUNTA_CONHECIMENTO,
     PERGUNTA_CONHECIMENTO_HPV,
+    PERGUNTA_REDE_ATENDIMENTO,
 ]
 
 
@@ -41,6 +43,8 @@ class IndicadoresDemograficos:
     total_nunca_realizaram: int
     total_conhecem: int
     total_conhecem_hpv: int
+    total_rede_publica: int
+    total_rede_privada: int
 
 
 def normalizar_texto(valor: Any) -> str:
@@ -111,8 +115,15 @@ def conhece_papanicolau(valor: Any) -> bool:
 def conhece_hpv(valor: Any) -> bool:
     return normalizar_texto(valor) == "sim"
 
-def conhece_hpv(valor: Any) -> bool:
-    return normalizar_texto(valor) == "sim"
+
+def classificar_rede_atendimento(valor: Any) -> str | None:
+    texto = normalizar_texto(valor)
+    if "public" in texto:
+        return "Pública"
+    if "privad" in texto:
+        return "Privada"
+    return None
+
 
 def valores_unicos(serie: pd.Series) -> list[str]:
     """Retorna os valores preenchidos em ordem alfabética."""
@@ -135,12 +146,17 @@ def calcular_indicadores(
     realizacao_exame = dataframe[PERGUNTA_EXAME].map(classificar_exame)
     conhecimento = dataframe[PERGUNTA_CONHECIMENTO].map(conhece_papanicolau)
     conhecimento_hpv = dataframe[PERGUNTA_CONHECIMENTO_HPV].map(conhece_hpv)
+    rede_atendimento = dataframe[PERGUNTA_REDE_ATENDIMENTO].map(
+        classificar_rede_atendimento
+    )
     return IndicadoresDemograficos(
         total_respostas=len(dataframe),
         total_ja_realizaram=int(realizacao_exame.eq("Já realizou").sum()),
         total_nunca_realizaram=int(realizacao_exame.eq("Nunca realizou").sum()),
         total_conhecem=int(conhecimento.sum()),
         total_conhecem_hpv=int(conhecimento_hpv.sum()),
+        total_rede_publica=int(rede_atendimento.eq("Pública").sum()),
+        total_rede_privada=int(rede_atendimento.eq("Privada").sum()),
     )
 
 
@@ -154,6 +170,9 @@ def montar_tabela_demografica(
     realizacao_exame = dataframe[PERGUNTA_EXAME].map(classificar_exame)
     conhecimento = dataframe[PERGUNTA_CONHECIMENTO].map(conhece_papanicolau)
     conhecimento_hpv = dataframe[PERGUNTA_CONHECIMENTO_HPV].map(conhece_hpv)
+    rede_atendimento = dataframe[PERGUNTA_REDE_ATENDIMENTO].map(
+        classificar_rede_atendimento
+    )
 
     escolaridade = dataframe[PERGUNTA_ESCOLARIDADE].map(limpar_texto)
     etnia = dataframe[PERGUNTA_ETNIA].map(limpar_texto)
@@ -189,13 +208,18 @@ def montar_tabela_demografica(
                 "Conhecimento sobre o HPV\n"
                 f"Total = {indicadores.total_conhecem_hpv} (%)"
             ),
+            (
+                "Rede de atendimento\n"
+                f"Pública = {indicadores.total_rede_publica} | "
+                f"Privada = {indicadores.total_rede_privada}"
+            ),
         ]
     ]
     linhas_de_secao: list[int] = []
 
     for titulo_secao, serie_grupo, categorias in secoes:
         linhas_de_secao.append(len(tabela))
-        tabela.append([titulo_secao, "", "", "", "", ""])
+        tabela.append([titulo_secao, "", "", "", "", "", ""])
 
         for categoria in categorias:
             mascara = serie_grupo.eq(categoria)
@@ -208,6 +232,12 @@ def montar_tabela_demografica(
             )
             conhecem = int((mascara & conhecimento).sum())
             conhecem_hpv = int((mascara & conhecimento_hpv).sum())
+            rede_publica = int(
+                (mascara & rede_atendimento.eq("Pública")).sum()
+            )
+            rede_privada = int(
+                (mascara & rede_atendimento.eq("Privada")).sum()
+            )
 
             tabela.append(
                 [
@@ -231,6 +261,18 @@ def montar_tabela_demografica(
                     formatar_n_percentual(
                         conhecem_hpv,
                         indicadores.total_conhecem_hpv,
+                    ),
+                    (
+                        "Pública: "
+                        + formatar_n_percentual(
+                            rede_publica,
+                            indicadores.total_rede_publica,
+                        )
+                        + "\nPrivada: "
+                        + formatar_n_percentual(
+                            rede_privada,
+                            indicadores.total_rede_privada,
+                        )
                     ),
                 ]
             )
