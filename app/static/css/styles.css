@@ -1200,6 +1200,14 @@ footer > p {
     display: none;
   }
 
+  .topbar-status {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    justify-content: center;
+  }
+
   .hero {
     min-height: auto;
     padding: 45px 0 70px;
@@ -1219,12 +1227,18 @@ footer > p {
 
   .visual-card {
     right: 0;
+    width: 100%;
+    transform: none;
   }
 
   .visual-content {
-    grid-template-columns: 90px 1fr;
+    grid-template-columns: 90px minmax(0, 1fr);
     gap: 18px;
     padding: 27px 20px 30px;
+  }
+
+  .mini-chart {
+    min-width: 0;
   }
 
   .mini-metric {
@@ -1236,15 +1250,21 @@ footer > p {
   }
 
   .chart-row {
-    grid-template-columns: 70px 1fr 32px;
+    grid-template-columns: 64px minmax(0, 1fr) 32px;
+    gap: 7px;
+  }
+
+  .chart-row > span {
+    line-height: 1.25;
   }
 
   .badge-top {
-    right: -5px;
+    top: -10px;
+    right: 8px;
   }
 
   .badge-bottom {
-    left: -3px;
+    left: 6px;
   }
 
   .floating-badge {
