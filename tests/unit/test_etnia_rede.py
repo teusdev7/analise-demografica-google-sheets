@@ -44,16 +44,32 @@ class EtniaRedeTest(unittest.TestCase):
             ]
         )
 
-        tabela, total_privada, total_publica = montar_tabela_etnia_rede(
-            dataframe
-        )
+        (
+            tabela,
+            total_privada,
+            total_publica,
+            total_nunca_realizou,
+        ) = montar_tabela_etnia_rede(dataframe)
 
         self.assertEqual(total_privada, 1)
         self.assertEqual(total_publica, 1)
-        self.assertEqual(tabela[1], ["Branco", "1 (100,0%)", "0 (0,0%)"])
-        self.assertEqual(tabela[2], ["Preto", "0 (0,0%)", "1 (100,0%)"])
-        self.assertEqual(tabela[3], ["Pardo", "0 (0,0%)", "0 (0,0%)"])
-        self.assertEqual(tabela[-1], ["TOTAL", "1 (100,0%)", "1 (100,0%)"])
+        self.assertEqual(total_nunca_realizou, 1)
+        self.assertEqual(
+            tabela[1],
+            ["Branco", "1 (100,0%)", "0 (0,0%)", "0 (0,0%)"],
+        )
+        self.assertEqual(
+            tabela[2],
+            ["Preto", "0 (0,0%)", "1 (100,0%)", "0 (0,0%)"],
+        )
+        self.assertEqual(
+            tabela[3],
+            ["Pardo", "0 (0,0%)", "0 (0,0%)", "1 (100,0%)"],
+        )
+        self.assertEqual(
+            tabela[-1],
+            ["TOTAL", "1 (100,0%)", "1 (100,0%)", "1 (100,0%)"],
+        )
 
 
 if __name__ == "__main__":

@@ -23,6 +23,7 @@ class ResultadoEtniaRede:
     gid_aba: int
     total_privada: int
     total_publica: int
+    total_nunca_realizou: int
     tabela: list[list[str]]
     link: str
 
@@ -43,9 +44,15 @@ def criar_tabela_etnia_rede(
     informar(f"{len(dataframe)} respostas carregadas")
 
     informar("Classificando etnias e redes de atendimento")
-    tabela, total_privada, total_publica = montar_tabela_etnia_rede(dataframe)
+    (
+        tabela,
+        total_privada,
+        total_publica,
+        total_nunca_realizou,
+    ) = montar_tabela_etnia_rede(dataframe)
     informar(
-        f"Cálculo concluído: privada={total_privada}, pública={total_publica}"
+        f"Cálculo concluído: privada={total_privada}, pública={total_publica}, "
+        f"nunca realizou={total_nunca_realizou}"
     )
 
     informar(f'Criando ou localizando a aba "{nome_aba}"')
@@ -54,7 +61,7 @@ def criar_tabela_etnia_rede(
     informar("Limpando os dados anteriores da aba de destino")
     servico.spreadsheets().values().clear(
         spreadsheetId=spreadsheet_id,
-        range=f"'{aba_a1}'!A:C",
+        range=f"'{aba_a1}'!A:D",
         body={},
     ).execute()
     informar("Escrevendo a tabela de etnia por rede")
@@ -69,7 +76,7 @@ def criar_tabela_etnia_rede(
         sheet_id=sheet_id,
         quantidade_linhas=len(tabela),
         linhas_de_secao=[len(tabela) - 1],
-        quantidade_colunas=3,
+        quantidade_colunas=4,
     )
     servico.spreadsheets().batchUpdate(
         spreadsheetId=spreadsheet_id,
@@ -82,7 +89,7 @@ def criar_tabela_etnia_rede(
         .values()
         .get(
             spreadsheetId=spreadsheet_id,
-            range=f"'{aba_a1}'!A1:C{len(tabela)}",
+            range=f"'{aba_a1}'!A1:D{len(tabela)}",
         )
         .execute()
         .get("values", [])
@@ -102,6 +109,7 @@ def criar_tabela_etnia_rede(
         gid_aba=sheet_id,
         total_privada=total_privada,
         total_publica=total_publica,
+        total_nunca_realizou=total_nunca_realizou,
         tabela=tabela,
         link=link,
     )

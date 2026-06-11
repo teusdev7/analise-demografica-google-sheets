@@ -179,7 +179,8 @@ def main() -> int:
                 "(message) => finish(message)",
                 (
                     f"Finalizado: {resultado.total_privada} na rede privada "
-                    f"e {resultado.total_publica} na rede pública."
+                    f"{resultado.total_publica} na rede pública e "
+                    f"{resultado.total_nunca_realizou} nunca realizaram."
                 ),
             )
             painel.wait_for_timeout(3000)
